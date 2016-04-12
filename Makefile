@@ -6,6 +6,8 @@ IMAGE_PREFIX ?= deis
 
 include versioning.mk
 
+SHELL_SCRIPTS = $(wildcard rootfs/bin/*) $(wildcard rootfs/runner/*) $(wildcard _scripts/*.sh)
+
 all: build docker-build docker-push
 
 bootstrap:
@@ -43,7 +45,15 @@ mc:
 	docker push ${DEIS_REGISTRY}/deis/minio-mc:latest
 	perl -pi -e "s|image: [a-z0-9.:]+\/|image: ${DEIS_REGISTRY}/|g" manifests/deis-mc-pod.yaml
 
-test:
+test: test-style test-unit test-functional
+
+test-unit:
+	@echo "Implement unit tests in _tests directory"
+
+test-functional:
 	@echo "Implement functional tests in _tests directory"
 
-.PHONY: all bootstrap build docker-compile kube-up kube-down deploy mc kube-mc test
+test-style:
+	shellcheck $(SHELL_SCRIPTS)
+
+.PHONY: all bootstrap build docker-compile kube-up kube-down deploy mc kube-mc test test-style test-unit test-functional
