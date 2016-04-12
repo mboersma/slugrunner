@@ -1,18 +1,17 @@
 language: bash
 
-services:
-  - docker
-
 sudo: required
 
-cache:
-  directories:
-  - $HOME/.cabal
+services:
+  - docker
 
 env:
   - PATH=$PATH:$HOME/.cabal/bin
 
 addons:
+  artifacts:
+    paths:
+    - $HOME/.cabal/bin/shellcheck
   apt:
     packages:
     - cabal-install
