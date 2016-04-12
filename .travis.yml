@@ -1,19 +1,37 @@
-language: go
-go:
-  - 1.5.1
-branches:
-  only:
-    - master
+language: bash
+
 services:
   - docker
+
 sudo: required
+
+cache:
+  directories:
+  - $HOME/.cabal
+
+env:
+  - PATH=$PATH:$HOME/.cabal/bin
+
+addons:
+  apt:
+    packages:
+    - cabal-install
+    - git
+    - ghc
+
+before_install:
+  - git clone --branch v0.4.3 --single-branch https://github.com/koalaman/shellcheck.git
+  - pushd shellcheck && cabal update && cabal install && popd
+
 script:
   - make bootstrap test
+
 deploy:
   provider: script
   script: _scripts/deploy.sh
   on:
     branch: master
+
 notifications:
   webhooks:
     urls:
